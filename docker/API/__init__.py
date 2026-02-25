@@ -1,0 +1,1 @@
+"""Retail forecasting FastAPI package."""

@@ -1,0 +1,23 @@
+# Image for the XGBoost variant. Switch the base image to an NVIDIA CUDA runtime
+# and run with `--gpus all` if you plan to retrain on GPU.
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    MODEL_VARIANT=xgboost
+
+WORKDIR /app
+
+COPY docker/requirements.xgboost.txt /tmp/requirements.txt
+RUN pip install --upgrade pip \
+    && pip install -r /tmp/requirements.txt \
+    && rm -rf /tmp/requirements.txt
+
+COPY docker /app/docker
+COPY Dashboard /app/Dashboard
+COPY model /app/model
+
+EXPOSE 8080
+
+CMD ["uvicorn", "docker.app:app", "--host", "0.0.0.0", "--port", "8080"]
